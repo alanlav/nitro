@@ -592,6 +592,8 @@ NITFPRIV(NITF_BOOL) fromStringToString(nitf_Field * field, char *outValue,
 }
 
 
+NITFPRIV(NITF_BOOL) toInt8(nitf_Field* field, int8_t* int16,
+                           nitf_Error* error);
 NITFPRIV(NITF_BOOL) toInt16(nitf_Field * field, int16_t * int16,
                             nitf_Error * error);
 NITFPRIV(NITF_BOOL) toInt32(nitf_Field * field, int32_t * int32,
@@ -619,12 +621,28 @@ NITFPRIV(NITF_BOOL) fromIntToString(nitf_Field * field, char *outValue,
     /*  These are all two-step processes 1) get native int 2) NITF_SNPRINTF */
     switch (field->length)
     {
+        case 1:
+        {
+            int8_t int8;
+            if (!toInt8(field, &int8, error))
+              goto CATCH_ERROR;
+            actualLength = NITF_SNPRINTF(buffer, 256, "%d", int8);
+        }
+        break;
         case 2:
         {
             int16_t int16;
             if (!toInt16(field, &int16, error))
                 goto CATCH_ERROR;
             actualLength = NITF_SNPRINTF(buffer, 256, "%d", int16);
+        }
+        break;
+        case 3:
+        {
+            int32_t int24;
+            if (!toInt(field, &int24, 3, error))
+              goto CATCH_ERROR;
+            actualLength = NITF_SNPRINTF(buffer, 256, "%d", int24);
         }
         break;
         case 4:
@@ -751,6 +769,15 @@ NITFPRIV(NITF_BOOL) toReal(nitf_Field * field, NITF_DATA * outData,
 }
 
 
+NITFPRIV(NITF_BOOL) toInt8(nitf_Field* field, int8_t* int8,
+                           nitf_Error* error)
+{
+    (void)error;
+    *int8 = *((int8_t*) field->raw);
+    return NITF_SUCCESS;
+}
+
+
 NITFPRIV(NITF_BOOL) toInt16(nitf_Field * field, int16_t * int16,
                             nitf_Error * error)
 {
@@ -833,6 +860,12 @@ NITFPRIV(NITF_BOOL) fromStringToInt(nitf_Field * field,
             *int16 = (int16_t) NITF_ATO32(buffer);
         }
         break;
+        case 3:
+        {
+            uint32_t* int24 = (uint32_t*) outData;
+            *int24 = (uint32_t) NITF_ATO32(buffer);
+        }
+        break;
         case 4:
         {
             int32_t *int32 = (int32_t *) outData;
@@ -886,6 +919,12 @@ NITFPRIV(NITF_BOOL) fromStringToUint(nitf_Field * field,
             *int16 = (uint16_t) NITF_ATO32(buffer);
         }
         break;
+        case 3:
+        {
+            uint32_t* int24 = (uint32_t*) outData;
+            *int24 = (uint32_t) NITF_ATO32(buffer);
+        }
+        break;
         case 4:
         {
             uint32_t *int32 = (uint32_t *) outData;
@@ -923,8 +962,17 @@ NITFPRIV(NITF_BOOL) toInt(nitf_Field * field,
     {
         switch (field->length)
         {
+            case 1:
+                *(int8_t*)outData = 0;
+                memcpy(outData, field->raw, 3);
+                status = NITF_SUCCESS;
             case 2:
                 status = toInt16(field, (int16_t *) outData, error);
+                break;
+            case 3:
+                *(int32_t*)outData = 0;
+                memcpy(outData, field->raw, 3);
+                status = NITF_SUCCESS;
                 break;
             case 4:
                 status = toInt32(field, (int32_t *) outData, error);
@@ -959,8 +1007,17 @@ NITFPRIV(NITF_BOOL) toUint(nitf_Field * field,
     {
         switch (field->length)
         {
+            case 1:
+                *(int8_t*)outData = 0;
+                memcpy(outData, field->raw, 3);
+                status = NITF_SUCCESS;
             case 2:
                 status = toUint16(field, (uint16_t *) outData, error);
+                break;
+            case 3:
+                *(uint32_t*)outData = 0;
+                memcpy(outData, field->raw, 3);
+                status = NITF_SUCCESS;
                 break;
             case 4:
                 status = toUint32(field, (uint32_t *) outData, error);
