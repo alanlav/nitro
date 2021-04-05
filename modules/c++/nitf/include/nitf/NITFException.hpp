@@ -24,6 +24,8 @@
 #define __NITF_EXCEPTION_HPP__
 #pragma once
 
+#include <cstddef> // std::nullptr_t
+
 #include "nitf/coda-oss.hpp"
 #include "nitf/System.hpp"
 
@@ -37,7 +39,7 @@ namespace nitf
  *  \class NITFException
  *  \brief  The C++ wrapper for the nitf_Error
  */
-class NITFException final : public except::Exception
+class NITFException  /*final*/ : public except::Exception // no "final", SWIG doesn't like it
 {
     static except::Context make_Context_(const nitf_Error* error, const std::string& message)
     {
@@ -52,7 +54,7 @@ class NITFException final : public except::Exception
         return make_Context_(error, message + " (" + std::string(error->message) + ")");
     }
 
-    NITFException(const except::Context& context, nullptr_t)
+    NITFException(const except::Context& context, std::nullptr_t)
     {
         mMessage = context.getMessage();
         mTrace.pushContext(context);
