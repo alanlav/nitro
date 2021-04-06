@@ -600,6 +600,8 @@ NITFPRIV(NITF_BOOL) toInt32(nitf_Field * field, int32_t * int32,
                             nitf_Error * error);
 NITFPRIV(NITF_BOOL) toInt64(nitf_Field * field, int64_t * int64,
                             nitf_Error * error);
+NITFPRIV(NITF_BOOL) toUint8(nitf_Field * field, uint8_t * int16,
+                             nitf_Error * error);
 NITFPRIV(NITF_BOOL) toUint16(nitf_Field * field, uint16_t * int16,
                              nitf_Error * error);
 NITFPRIV(NITF_BOOL) toUint32(nitf_Field * field, uint32_t * int32,
@@ -805,6 +807,15 @@ NITFPRIV(NITF_BOOL) toInt64(nitf_Field * field, int64_t * int64,
 }
 
 
+NITFPRIV(NITF_BOOL) toUint8(nitf_Field* field, uint8_t* int8,
+                            nitf_Error* error)
+{
+    (void)error;
+    *int8 = *((uint8_t*)field->raw);
+    return NITF_SUCCESS;
+}
+
+
 NITFPRIV(NITF_BOOL) toUint16(nitf_Field * field, uint16_t * int16,
                              nitf_Error * error)
 {
@@ -963,9 +974,8 @@ NITFPRIV(NITF_BOOL) toInt(nitf_Field * field,
         switch (field->length)
         {
             case 1:
-                *(int8_t*)outData = 0;
-                memcpy(outData, field->raw, 3);
-                status = NITF_SUCCESS;
+                status = toInt8(field, (int8_t *) outData, error);
+                break;
             case 2:
                 status = toInt16(field, (int16_t *) outData, error);
                 break;
@@ -1008,9 +1018,8 @@ NITFPRIV(NITF_BOOL) toUint(nitf_Field * field,
         switch (field->length)
         {
             case 1:
-                *(int8_t*)outData = 0;
-                memcpy(outData, field->raw, 3);
-                status = NITF_SUCCESS;
+                status = toUint8(field, (uint8_t *) outData, error);
+                break;
             case 2:
                 status = toUint16(field, (uint16_t *) outData, error);
                 break;
