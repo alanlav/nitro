@@ -163,102 +163,102 @@ TEST_CASE(setReal)
 
 TEST_CASE(nitfBinaryConversions)
 {
-  // Declare Variables
-  nitf_Error error;
-  NITF_BOOL ret = FALSE;
+    // Declare Variables
+    nitf_Error error;
+    NITF_BOOL ret = FALSE;
 
-  // Construct & Test Fields (Case 1)
-  nitf_Field* bin1 = NULL, * ubin1 = NULL;
-  bin1 = nitf_Field_construct(1, NITF_BINARY, &error);
-  ubin1 = nitf_Field_construct(1, NITF_BINARY, &error);
+    // Construct & Test Fields (Case 1)
+    nitf_Field* bin1 = NULL, * ubin1 = NULL;
+    bin1 = nitf_Field_construct(1, NITF_BINARY, &error);
+    ubin1 = nitf_Field_construct(1, NITF_BINARY, &error);
 
-  TEST_ASSERT(bin1);
-  TEST_ASSERT(ubin1);
+    TEST_ASSERT(bin1);
+    TEST_ASSERT(ubin1);
 
-  // Set Field Data (Case 1)
-  int8_t int8 = 0x7F;
-  uint8_t uint8 = 0b1111111;
-  nitf_Field_setRawData(bin1, &int8, 1, &error);
-  nitf_Field_setRawData(ubin1, &uint8, 1, &error);
-  
-  // toInt (Case 1)
-  int8_t out = 0;
-  ret = nitf_Field_get(bin1, &out, NITF_CONV_INT, 1, &error);
-  TEST_ASSERT(ret);
-  printf("toInt (1): [%d]\n", out);
-  TEST_ASSERT_EQ_INT(out, 127);
+    // Set Field Data (Case 1)
+    int8_t int8 = 0x7F;
+    uint8_t uint8 = 0b1111111;
+    nitf_Field_setRawData(bin1, &int8, 1, &error);
+    nitf_Field_setRawData(ubin1, &uint8, 1, &error);
 
-  // toUint (Case 1)
-  uint8_t uout = 0;
-  ret = nitf_Field_get(ubin1, &uout, NITF_CONV_UINT, 1, &error);
-  TEST_ASSERT(ret);
-  printf("toUint (1): [%d]\n", uout);
-  TEST_ASSERT_EQ_INT(uout, 127);
+    // toInt (Case 1)
+    int8_t out = 0;
+    ret = nitf_Field_get(bin1, &out, NITF_CONV_INT, 1, &error);
+    TEST_ASSERT(ret);
+    printf("toInt (1): [%d]\n", out);
+    TEST_ASSERT_EQ_INT(out, 127);
 
-  // intToString (Case 1)
-  char bin1_str[6];
-  ret = nitf_Field_get(bin1, bin1_str, NITF_CONV_STRING, 6, &error);
-  TEST_ASSERT(ret);
-  printf("fromIntToString (1): [%s]\n", bin1_str);
-  TEST_ASSERT_EQ_STR(bin1_str, "127");
+    // toUint (Case 1)
+    uint8_t uout = 0;
+    ret = nitf_Field_get(ubin1, &uout, NITF_CONV_UINT, 1, &error);
+    TEST_ASSERT(ret);
+    printf("toUint (1): [%d]\n", uout);
+    TEST_ASSERT_EQ_INT(uout, 127);
 
-  // Construct & Test Fields (Case 3)
-  nitf_Field* bin3 = NULL, * ubin3 = NULL;
-  bin3 = nitf_Field_construct(3, NITF_BINARY, &error);
-  ubin3 = nitf_Field_construct(3, NITF_BINARY, &error);
+    // intToString (Case 1)
+    char bin1_str[6];
+    ret = nitf_Field_get(bin1, bin1_str, NITF_CONV_STRING, 6, &error);
+    TEST_ASSERT(ret);
+    printf("fromIntToString (1): [%s]\n", bin1_str);
+    TEST_ASSERT_EQ_STR(bin1_str, "127");
 
-  TEST_ASSERT(bin3);
-  TEST_ASSERT(ubin3);
+    // Construct & Test Fields (Case 3)
+    nitf_Field* bin3 = NULL, * ubin3 = NULL;
+    bin3 = nitf_Field_construct(3, NITF_BINARY, &error);
+    ubin3 = nitf_Field_construct(3, NITF_BINARY, &error);
 
-  // Set Field Data (Case 3)
-  int32_t int32 = 0b11111111111111111111111;
-  uint32_t uint32 = 0x7FFFFF;
-  nitf_Field_setRawData(bin3, &int32, 3, &error);
-  nitf_Field_setRawData(ubin3, &uint32, 3, &error);
+    TEST_ASSERT(bin3);
+    TEST_ASSERT(ubin3);
 
-  // toInt (Case 3)
-  int32_t out3 = 0;
-  ret = nitf_Field_get(bin3, &out3, NITF_CONV_INT, 3, &error);
-  TEST_ASSERT(ret);
-  printf("toInt (3): [%d]\n", out3);
-  TEST_ASSERT_EQ_INT(out3, 8388607);
+    // Set Field Data (Case 3)
+    int32_t int32 = 0b11111111111111111111111;
+    uint32_t uint32 = 0x7FFFFF;
+    nitf_Field_setRawData(bin3, &int32, 3, &error);
+    nitf_Field_setRawData(ubin3, &uint32, 3, &error);
 
-  // toUint (Case 3)
-  uint32_t uout3 = 0;
-  ret = nitf_Field_get(ubin3, &uout3, NITF_CONV_UINT, 3, &error);
-  TEST_ASSERT(ret);
-  printf("toUint (3): [%d]\n", uout3);
-  TEST_ASSERT_EQ_INT(uout3, 8388607);
+    // toInt (Case 3)
+    int32_t out3 = 0;
+    ret = nitf_Field_get(bin3, &out3, NITF_CONV_INT, 3, &error);
+    TEST_ASSERT(ret);
+    printf("toInt (3): [%d]\n", out3);
+    TEST_ASSERT_EQ_INT(out3, 8388607);
 
-  // intToString (Case 3)
-  char bin3_str[14];
-  ret = nitf_Field_get(bin3, bin3_str, NITF_CONV_STRING, 14, &error);
-  TEST_ASSERT(ret);
-  printf("fromIntToString (3): [%s]\n", bin3_str);
-  TEST_ASSERT_EQ_STR(bin3_str, "8388607");
+    // toUint (Case 3)
+    uint32_t uout3 = 0;
+    ret = nitf_Field_get(ubin3, &uout3, NITF_CONV_UINT, 3, &error);
+    TEST_ASSERT(ret);
+    printf("toUint (3): [%d]\n", uout3);
+    TEST_ASSERT_EQ_INT(uout3, 8388607);
 
-  // Construct & Test String Field (Case 3)
-  nitf_Field* sbin3 = NULL;
-  sbin3 = nitf_Field_construct(7, NITF_BCS_A, &error);
+    // intToString (Case 3)
+    char bin3_str[14];
+    ret = nitf_Field_get(bin3, bin3_str, NITF_CONV_STRING, 14, &error);
+    TEST_ASSERT(ret);
+    printf("fromIntToString (3): [%s]\n", bin3_str);
+    TEST_ASSERT_EQ_STR(bin3_str, "8388607");
 
-  TEST_ASSERT(sbin3);
+    // Construct & Test String Field (Case 3)
+    nitf_Field* sbin3 = NULL;
+    sbin3 = nitf_Field_construct(7, NITF_BCS_A, &error);
 
-  // Set Field Data (Case 3)
-  nitf_Field_setRawData(sbin3, "8388607", 7, &error);
+    TEST_ASSERT(sbin3);
 
-  // stringToInt (Case 3)
-  int32_t sout3 = 0;
-  ret = nitf_Field_get(sbin3, &sout3, NITF_CONV_INT, 3, &error);
-  TEST_ASSERT(ret);
-  printf("fromStringToInt (3): [%d]\n", sout3);
-  TEST_ASSERT_EQ_INT(sout3, 8388607);
+    // Set Field Data (Case 3)
+    nitf_Field_setRawData(sbin3, "8388607", 7, &error);
 
-  // stringToUint (Case 3)
-  uint32_t suout3 = 0;
-  ret = nitf_Field_get(sbin3, &suout3, NITF_CONV_INT, 3, &error);
-  TEST_ASSERT(ret);
-  printf("fromStringToUint (3): [%d]\n", suout3);
-  TEST_ASSERT_EQ_INT(suout3, 8388607);
+    // stringToInt (Case 3)
+    int32_t sout3 = 0;
+    ret = nitf_Field_get(sbin3, &sout3, NITF_CONV_INT, 3, &error);
+    TEST_ASSERT(ret);
+    printf("fromStringToInt (3): [%d]\n", sout3);
+    TEST_ASSERT_EQ_INT(sout3, 8388607);
+
+    // stringToUint (Case 3)
+    uint32_t suout3 = 0;
+    ret = nitf_Field_get(sbin3, &suout3, NITF_CONV_INT, 3, &error);
+    TEST_ASSERT(ret);
+    printf("fromStringToUint (3): [%d]\n", suout3);
+    TEST_ASSERT_EQ_INT(suout3, 8388607);
 }
 
 TEST_MAIN(
